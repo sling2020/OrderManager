@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.api.model.Order;
+import com.api.model.OrderStatus;
 import com.api.model.StandarResponse;
 import com.api.repository.OrderRepository;
 
@@ -37,8 +38,7 @@ public class OrderManagerService {
 			response = new StandarResponse(false, "Error looking order with id [" + id + "]: " + e.getMessage(), null);
 		}		
 		return response;
-	}
-	
+	}	
 	public StandarResponse findOrderByStatus(String status) {
 		StandarResponse response = 	null;
 		try {
@@ -62,5 +62,41 @@ public class OrderManagerService {
 		}		
 		return response;
 	}
+	public StandarResponse updateOrderStatus(long id, OrderStatus newStatus) {
+		StandarResponse response = 	null;
+		try {
+			Optional<Order> result = OrderRepository.findById(id);
+			if (result.isPresent()) {
+				result.get().setStatus(newStatus);
+				OrderRepository.save(result.get());
+				response = new StandarResponse(true, "Order status has been updated", result);
+	        } else {
+	        	response = new StandarResponse(false, "Order not found id: [" + id + "]", result);
+	        }
+			
+		} catch (Exception e) {
+			response = new StandarResponse(false, "Error updating order status with id [" + id +  "]: " +  e.getMessage(), null);
+		}
+		return response;
+	}
+	public StandarResponse cancelOrderById(long id) {
+		StandarResponse response = 	null;
+		try {
+			Optional<Order> result = OrderRepository.findById(id);
+			if (result.isPresent()) {
+				result.get().setStatus(OrderStatus.CANCELLED);
+				OrderRepository.save(result.get());
+				response = new StandarResponse(true, "Order status has been updated", result);
+	        } else {
+	        	response = new StandarResponse(false, "Order not found id: [" + id + "]", result);
+	        }
+			
+		} catch (Exception e) {
+			response = new StandarResponse(false, "Error updating order status with id [" + id +  "]: " +  e.getMessage(), null);
+		}
+		return response;
+	}
+
+	
 	
 }

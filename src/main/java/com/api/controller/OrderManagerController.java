@@ -4,19 +4,22 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.model.Order;
+import com.api.model.OrderStatus;
 import com.api.model.StandarResponse;
 import com.api.services.OrderManagerService;
 
-@RequestMapping("/api/order")
+@RequestMapping("/api/orders")
 @RestController
 public class OrderManagerController {
 	@Autowired
@@ -40,6 +43,16 @@ public class OrderManagerController {
 	@GetMapping("/dates")
 	public ResponseEntity<StandarResponse> findOrderCreateDateBetween(@RequestParam Date startDate, Date endDate){
 		return ResponseEntity.ok(orderManagerService.findOrderCreateDateBetween(startDate, endDate));
+	}
+	
+	@PutMapping("/{id}/status")
+	public ResponseEntity<StandarResponse> updateOrderStatus(@PathVariable long id, @RequestParam OrderStatus newStatus){
+		return ResponseEntity.ok(orderManagerService.updateOrderStatus(id, newStatus));
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<StandarResponse> cancelOrderById(@PathVariable long id){
+		return ResponseEntity.ok(orderManagerService.cancelOrderById(id));
 	}
 	
 }
